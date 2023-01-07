@@ -297,7 +297,7 @@ class IdleGame(object):
         
     @property
     def _userData(self):
-        return self._parseOffset(self._controller, 0xb0)
+        return self._parseOffset(self._controller, 0xb8)
 
 
     @property
@@ -639,7 +639,7 @@ class IdleGame(object):
 
 
     @property
-    def offlineProgressType(self):
+    def offlineProgressType(self):  # this is no more
         return self._parseOffset(self._offlineHandler, 0x98, bytes=4)
 
 # end offlineHandler
@@ -677,7 +677,7 @@ class IdleGame(object):
     
     @property
     def autoProgressToggle(self):
-        return self._parseOffset(self._autoProgressButton, 0x3c2, bytes=4)
+        return self._parseOffset(self._autoProgressButton, 0x3ca, bytes=4)
 
 
     @property
