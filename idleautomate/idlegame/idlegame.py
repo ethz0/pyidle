@@ -149,11 +149,11 @@ class IdleGame(object):
         return mono_ptr_lst
 
 
-    def monoObject(self):
-        result = []
-        res = self._proc.vm_read(self._mono_addr + 0x3eee08, 0x10)
-        result.append(struct.unpack('<QQ', res))
-        return result
+    # def monoObject(self):
+    #     result = []
+    #     res = self._proc.vm_read(self._mono_addr + 0x3eee08, 0x10)
+    #     result.append(struct.unpack('<QQ', res))
+    #     return result
 
     # def offsets(self, table, start_addr, end_addr):
     #     p_list = []
@@ -273,6 +273,7 @@ class IdleGame(object):
     @property
     def _gameInstance(self):
         try:
+            # base("/libmonobdwgc-2.0.dylib") + 0x32B8B0 = 28 9d
             return self._parseOffset(self._mono_table[0][0], 0x9d28)
         except IndexError as e:
             logging.debug('Index error in mono table, retrying')
@@ -302,7 +303,7 @@ class IdleGame(object):
 
     @property
     def _activeUserGameInstance(self):
-        return self._parseOffset(self._userData, 0x294, bytes=4)
+        return self._parseOffset(self._userData, 0x29c, bytes=4)
 
     
     @property
@@ -317,12 +318,12 @@ class IdleGame(object):
     
     @property
     def userDataInited(self):
-        return self._parseOffset(self._userData, 0x280, bytes=4)
+        return self._parseOffset(self._userData, 0x288, bytes=4)
 
 
     @property
     def gems(self):
-        return self._parseOffset(self._userData, 0x264, bytes=4)
+        return self._parseOffset(self._userData, 0x26c, bytes=4)
 
 ####################
 # timescales
@@ -403,7 +404,22 @@ class IdleGame(object):
     @property
     def _currentAreaLevel(self):
         return self._parseOffset(self._currentArea, 0x54)
-            
+
+
+    @property
+    def currentAreaId(self):
+        return self._parseOffset(self._activeCampaignData, 0x88, bytes=4)
+    
+
+    @property
+    def highestAvailableAreaId(self):
+        return self._parseOffset(self._activeCampaignData, 0x90, bytes=4)
+
+
+    @property
+    def gold(self):
+        return self._parseOffset(self._activeCampaignData, 0x250, bytes=8)
+
 # end activeCampaignData
     
 # resetHandler
@@ -474,7 +490,7 @@ class IdleGame(object):
     
 
     def heroesEffects(self, hero_addr):
-        return self._parseOffset(hero_addr, 0x90)
+        return self._parseOffset(hero_addr, 0x98)
 
 
     def heroesEffectsKeysByName(self, effects_addr):
@@ -482,23 +498,23 @@ class IdleGame(object):
 
     
     def heroesHealth(self, hero_addr):
-        return self._parseOffset(hero_addr, 0x358)
+        return self._parseOffset(hero_addr, 0x368)
     
 
     def heroesSlotID(self, hero_addr):
-        return self._parseOffset(hero_addr, 0x30c, bytes=4)
+        return self._parseOffset(hero_addr, 0x31c, bytes=4)
     
 
     def heroesOwned(self, hero_addr):
-        return self._parseOffset(hero_addr, 0x308, bytes=4)
-
-    
-    def heroesBenched(self, hero_addr):
         return self._parseOffset(hero_addr, 0x318, bytes=4)
 
     
+    def heroesBenched(self, hero_addr):
+        return self._parseOffset(hero_addr, 0x328, bytes=4)
+
+    
     def heroesLevel(self, hero_addr):
-        return self._parseOffset(hero_addr, 0x334, bytes=4)
+        return self._parseOffset(hero_addr, 0x344, bytes=4)
     
 # end heroHandler
 
@@ -523,17 +539,17 @@ class IdleGame(object):
 
     @property
     def areaActive(self):
-        return self._parseOffset(self._area, 0x1dc, bytes=4)
+        return self._parseOffset(self._area, 0x1e4, bytes=4)
 
 
     @property
     def basicMobsSpawnedThisArea(self):
-        return self._parseOffset(self._area, 0x240)
+        return self._parseOffset(self._area, 0x248)
 
     
     @property
     def secSinceStart(self):
-        res = self._parseOffset(self._area, 0x204, bytes=4, type='float')
+        res = self._parseOffset(self._area, 0x20c, bytes=4, type='float')
         try:
             return res[0]
         except:
